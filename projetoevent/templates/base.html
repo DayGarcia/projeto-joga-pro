@@ -6,13 +6,10 @@
   <head>
     <title>{% block title %}{% endblock %}</title>
     <link href="{% static 'css/stylesheet.css' %}" rel="stylesheet" />
+    {% block css %} {% endblock %}
   </head>
 
   <body>
-    <header>
-      <h1>Fabio Ruicci</h1>
-    </header>
-
-    <main>{% block content %} {% endblock %}</main>
+    {% block content %} {% endblock %}
   </body>
 </html>

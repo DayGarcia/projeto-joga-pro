@@ -22,4 +22,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('excel/upload', ExcelUpload.as_view(),
          name='excel_upload'),
+    path('', ExcelUpload.as_view(),
+         name='excel_upload')
+
 ]
