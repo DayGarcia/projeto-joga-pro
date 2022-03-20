@@ -12,7 +12,6 @@ class ExcelUpload(View):
         return render(request, 'projetoevent/excel/upload.html')
 
     def post(self, request):
-        # print(os.path.join('teste.xlsx'))
         # Define variable to load the wookbook
         wookbook = openpyxl.load_workbook(request.FILES['file'])
 
