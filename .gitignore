@@ -3,3 +3,4 @@ venv
 .git
 .env.dev
 __pycache__
+projetoevent/__pycache__
