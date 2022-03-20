@@ -4,7 +4,6 @@ from django.shortcuts import render
 from django.views.generic import View
 
 import openpyxl
-import os
 from projetoevent.models import Event, Ticket
 
 
@@ -13,14 +12,16 @@ class ExcelUpload(View):
         return render(request, 'projetoevent/excel/upload.html')
 
     def post(self, request):
-        print(os.path.join('teste.xlsx'))
+        # print(os.path.join('teste.xlsx'))
         # Define variable to load the wookbook
         wookbook = openpyxl.load_workbook(request.FILES['file'])
 
         # Define variable to read the active sheet:
         worksheet = wookbook.active
 
-        e = Event()
+        e = Event(
+            is_running=0
+        )
         e.save()
 
         # Iterate the loop to read the cell values
