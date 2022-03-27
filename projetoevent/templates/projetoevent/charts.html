@@ -24,11 +24,26 @@
       <div class="panel panel-default">
         <div class="panel-heading">
           <h2 class="panel-title">Relatórios</h2>
-          <h6 class="fw-normal">Visualizar dados dos jogos {{ valid }}</h6>
+          <h6 class="fw-normal">Visualizar dados dos jogos</h6>
         </div>
       </div>
     </div>
   </div>
+  <div class="row mb-3">
+    <div class="col-sm-4">
+      <label class="fw-bold">Selecionar Jogo</label>
+      <select class="form-select form-select" aria-label=".form-select-lg example">
+        <option selected>Selecione*</option>
+        <option value="1">Jogo 1</option>
+        <option value="2">Jogo 2</option>
+        <option value="3">Jogo 3</option>
+      </select>
+    </div>
+    <div class="col-sm-2">
+      <label class="fw-bold">Gerar PDF</label>
+      <button type="button" class="btn btn-danger"><i class="fa-solid fa-file-pdf"></i> Clique para gerar</button>
+    </div>
+  </div>    
   <div class="row mt-3 mb-3">
     <div class="col-md-6 d-flex flex-column">
       <div class="panel panel-default">
@@ -89,9 +104,9 @@
   function drawColumnChart() {
       var data = google.visualization.arrayToDataTable([
         ["Ingresso", "Status", { role: "style" } ],
-        ["Válido", {{ valid }}, "#567804"],
-        ["Inválido", {{ invalid }}, "#79a809"],
-        ["Bloqueado", {{ blocked }}, "#d7d7d7"],
+        ["Válido", 8, "#567804"],
+        ["Inválido", 10, "#79a809"],
+        ["Bloqueado", 19, "#d7d7d7"],
       ]);
 
       var view = new google.visualization.DataView(data);
