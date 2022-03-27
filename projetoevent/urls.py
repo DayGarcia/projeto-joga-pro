@@ -14,15 +14,16 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django import views
-from .views import ExcelUpload
+from .views import ExcelUpload, Charts
 from django.contrib import admin
 from django.urls import path
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('excel/upload', ExcelUpload.as_view(),
+    path('home', ExcelUpload.as_view(),
          name='excel_upload'),
     path('', ExcelUpload.as_view(),
-         name='excel_upload')
-
+         name='excel_upload'),
+    path('reports/charts', Charts.as_view(),
+         name='reports_charts')
 ]

@@ -9,7 +9,9 @@ from projetoevent.models import Event, Ticket
 
 class ExcelUpload(View):
     def get(self, request):
-        return render(request, 'projetoevent/excel/upload.html')
+        # get ticket data to return to view
+        tickets = Ticket.objects.all()
+        return render(request, 'projetoevent/home.html', {'tickets': tickets})
 
     def post(self, request):
         # Define variable to load the wookbook
@@ -44,4 +46,10 @@ class ExcelUpload(View):
                 )
                 t.save()
 
-        return HttpResponse('Arquivo enviado com sucesso! <a href="/excel/upload">Clique aqui para subir mais arquivos</a>')
+        return render(request, 'projetoevent/home.html', {'msg': 'Jogo importado com sucesso!'})
+        # return redirect('/home', {'msg': 'Jogo importado com sucesso!'})
+
+
+class Charts(View):
+    def get(self, request):
+        return render(request, 'projetoevent/charts.html')
