@@ -1,17 +1,20 @@
 from importlib.resources import path
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.views.generic import View
+from django.core import serializers
 
 import openpyxl
-from projetoevent.models import Event, Ticket
+from projetoevent.consts.action import ALREADY_CHECKED, INVALID, VALID
+from projetoevent.models import Event, Ticket, TicketLog
+from projetoevent.helpers.ticket_query import get_ticket_data
 
 
 class ExcelUpload(View):
     def get(self, request):
-        # get ticket data to return to view
-        tickets = Ticket.objects.all()
-        return render(request, 'projetoevent/home.html', {'tickets': tickets})
+        context = get_ticket_data()
+
+        return render(request, 'projetoevent/home.html', context)
 
     def post(self, request):
         # Define variable to load the wookbook
@@ -52,4 +55,22 @@ class ExcelUpload(View):
 
 class Charts(View):
     def get(self, request):
-        return render(request, 'projetoevent/charts.html')
+        context = get_ticket_data()
+
+        return render(request, 'projetoevent/charts.html', context)
+
+
+class RefreshTickets():
+    def get(request):
+        if is_ajax(request) and request.method == "GET":
+            data = get_ticket_data()
+            json = serializers.serialize('json', data)
+            print('meta', json)
+
+            return JsonResponse({"data": json}, status=200)
+
+        return JsonResponse({}, status=400)
+
+
+def is_ajax(request):
+    return request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'
