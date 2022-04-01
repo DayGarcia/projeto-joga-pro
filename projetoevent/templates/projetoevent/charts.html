@@ -33,9 +33,11 @@
   <div class="row mb-3">
     <div class="col-sm-4">
       <label class="fw-bold">Selecionar Jogo</label>
-      <select class="form-select form-select" aria-label=".form-select-lg example">
+      <select class="form-select form-select" aria-label=".form-select-lg example" onchange="javascript:handleSelect(this)">
         {% for event in events %}
-          {% if event.is_running == 1 %}
+          {% if event.id == id %}
+            <option value="{{ event.id }}" selected>{{ event.id }}</option>
+          {% elif event.is_running == 1 and not id %}
             <option value="{{ event.id }}" selected>{{ event.id }}</option>
           {% else %}
             <option value="{{ event.id }}">{{ event.id }}</option>
@@ -82,22 +84,13 @@
 {% block headjs %}
 
 <script type="text/javascript">
+  
   google.charts.load("current", { packages: ["corechart"] });
   google.charts.setOnLoadCallback(drawPieChart);
   const color_valid = "#567804"
   const color_invalid = "#b02a37"
   const color_blocked = "#0a58ca"
-
-  function genPDF(){
-	
-    let doc = new jsPDF();
-    doc.addHTML(document.getElementById('pdf'), 15, 15, {
-      'background': '#fff',
-    }, function() {
-      doc.save('dados-graficos.pdf');
-    });
-  }
-
+  const charts = []
   function drawPieChart() {
     let data = google.visualization.arrayToDataTable([
       ["Ingresso", "Status"],
@@ -117,6 +110,7 @@
     );
 
     chart.draw(data, options);
+    charts.push(chart)
   }
 
   google.charts.setOnLoadCallback(drawColumnChart);
@@ -144,16 +138,16 @@
       };
       let chart = new google.visualization.ColumnChart(document.getElementById("column-chart-container"));
       chart.draw(view, options);
+      charts.push(chart)
   }
 
   google.charts.setOnLoadCallback(drawLineChart);
   function drawLineChart() {
     let data = google.visualization.arrayToDataTable([
       ['Hora', 'Válidos', 'Inválidos',  'Bloqueados'],
-      ['01:00',  1000,      400, 12],
-      ['02:00',  1170,      460, 19],
-      ['03:00',  660,       1120, 29],
-      ['04:00',  1030,      540, 20]
+      ['01:00',  {{ valid_count }},      {{ invalid_count }}, {{ already_checked_count }}],
+      ['02:00',  {{ valid_count }},      {{ invalid_count }}, {{ already_checked_count }}],
+      ['03:00',  {{ valid_count }},      {{ invalid_count }}, {{ already_checked_count }}],
     ]);
 
     let options = {
@@ -170,8 +164,30 @@
     let chart = new google.visualization.LineChart(document.getElementById('line-chart-container'));
 
     chart.draw(data, options);
+    charts.push(chart)
+  }
+
+  function genPDF(){
+	
+    let doc = new jsPDF();
+    doc.addHTML(document.getElementById('pdf'), 15, 15, {
+      'background': '#fff',
+    }, function() {
+      doc.addImage(charts[0].getImageURI(), 10, 0);
+      doc.addImage(charts[1].getImageURI(), 10, 100);
+      doc.addImage(charts[2].getImageURI(), 10, 160);
+      doc.save('dados-graficos.pdf');
+    });
   }
 
 </script>
 
+{% endblock %}
+{% block javascript %}
+  <script>
+    function handleSelect(elm)
+    {
+      window.location.href = '/reports/charts?id=' + elm.value;
+    }
+  </script>
 {% endblock %}

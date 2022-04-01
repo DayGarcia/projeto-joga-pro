@@ -55,7 +55,10 @@ class ExcelUpload(View):
 
 class Charts(View):
     def get(self, request):
-        context = get_ticket_data()
+        if 'id' in request.GET:
+            context = get_ticket_data(request.GET['id'])
+        else:
+            context = get_ticket_data()
 
         return render(request, 'projetoevent/charts.html', context)
 
