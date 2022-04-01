@@ -5,7 +5,7 @@ services:
     build: ./projetoevent
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
-      - ./:/home/pi/projeto-joga-pro/
+      - ./:/home/pi/Desktop/Catraca/projeto-joga-pro/
     ports:
       - 8000:8000
     env_file:
