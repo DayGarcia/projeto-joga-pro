@@ -2,7 +2,7 @@
 FROM python:3.9.6-alpine
 
 # set work directory
-WORKDIR /usr/src/app
+WORKDIR /home/pi/Desktop/Catraca/projeto-joga-pro
 
 # set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
