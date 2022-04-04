@@ -84,7 +84,7 @@ DATABASES = {
         'NAME':  'projetojogapro',
         'USER': 'postgres',
         'PASSWORD': 'root',
-        'HOST': 'localhost',
+        'HOST': 'db',
         'PORT': '5432',
     }
 }
