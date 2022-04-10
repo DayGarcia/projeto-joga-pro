@@ -13,6 +13,9 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
 from pathlib import Path
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,7 +29,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'foo')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = int(os.environ.get("DEBUG", default=1))
+DEBUG = int(os.environ.get("DEBUG", default=True))
 
 # print(os.environ.get("DJANGO_ALLOWED_HOSTS"))
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
@@ -84,7 +87,8 @@ DATABASES = {
         'NAME':  'projetojogapro',
         'USER': 'postgres',
         'PASSWORD': 'root',
-        'HOST': 'db',
+        # 'HOST': 'db',
+        'HOST': 'localhost',
         'PORT': '5432',
     }
 }

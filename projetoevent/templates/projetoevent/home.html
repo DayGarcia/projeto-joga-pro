@@ -38,11 +38,18 @@
             <div class="col-sm-12">
               <h4 class="card-title">Estatísticas de Jogo</h4>
               <hr />
-              <span class="card-text">Total de Ingressos: <b>{{ total_count }}</b></span><br />
-              <span class="card-text">Total de Ingressos Dentro: <b>{{ valid_count }}</b></span><br />
-              <span class="card-text">Total de Ingressos Bloqueados: <b>{{ already_checked_count }}</b></span
+              <span class="card-text"
+                >Total de Ingressos: <b>{{ total_count }}</b></span
               ><br />
-              <span class="card-text">Total de Ingressos Inválidos: <b>{{ invalid_count }}</b></span
+              <span class="card-text"
+                >Total de Ingressos Dentro: <b>{{ valid_count }}</b></span
+              ><br />
+              <span class="card-text"
+                >Total de Ingressos Bloqueados:
+                <b>{{ already_checked_count }}</b></span
+              ><br />
+              <span class="card-text"
+                >Total de Ingressos Inválidos: <b>{{ invalid_count }}</b></span
               ><br />
             </div>
           </div>
@@ -51,10 +58,12 @@
               <div class="col-sm-5 border-right border-1">
                 <h5 class="card-title">Últimos ingressos válidos</h5>
                 {% for valid_ticket in valid_tickets %}
-                  <span class="card-text">{{valid_ticket.created_at|date:"h:i"}} - {{ valid_ticket.code }}</span><br />
-                {% endfor %}
-                {% if valid_tickets|length == 0 %}
-                  <span class="card-text">Nenhum ingresso válido</span><br />
+                <span class="card-text"
+                  >{{valid_ticket.created_at|date:"h:i"}} - {{ valid_ticket.code
+                  }}</span
+                ><br />
+                {% endfor %} {% if valid_tickets|length == 0 %}
+                <span class="card-text">Nenhum ingresso válido</span><br />
                 {% endif %}
                 <span class="card-text">-</span><br />
                 <span class="card-text">-</span><br />
@@ -64,18 +73,20 @@
                 <span class="card-text">-</span><br />
                 <span class="card-text">-</span><br />
                 <span class="card-text">-</span>
-                {% comment %} {% if valid_tickets|length < 10 %}
-                  {% for i in 1..(10-valid_tickets|length) %}
-                    <span class="card-text">...</span><br />
-                  {% endfor %}
-                {% endif %} {% endcomment %}
+                {% comment %} {% if valid_tickets|length < 10 %} {% for i in
+                1..(10-valid_tickets|length) %}
+                <span class="card-text">...</span><br />
+                {% endfor %} {% endif %} {% endcomment %}
               </div>
               <div class="col-sm-5">
-                <h5 class="card-title">
-                  Últimos ingressos inválidos
-                </h5>
+                <h5 class="card-title">Últimos ingressos inválidos</h5>
                 {% for invalid_ticket in invalid_tickets %}
-                  <span class="card-text"><span style="width: 30px">{{invalid_ticket.created_at|date:"h:i"}}</span> - {{ invalid_ticket.code }}</span><br />
+                <span class="card-text"
+                  ><span style="width: 30px"
+                    >{{invalid_ticket.created_at|date:"h:i"}}</span
+                  >
+                  - {{ invalid_ticket.code }}</span
+                ><br />
                 {% endfor %}
               </div>
             </div>
@@ -145,70 +156,73 @@
       <div class="my-3">
         <div class="card p-3">
           <div class="card-body">
-            <div class="row mb-3">
-              <div class="col-sm-12">
-                <label class="fw-bold">Selecionar Jogo</label>
-                <select
-                  class="form-select form-select"
-                  aria-label=".form-select-lg example"
-                >
-                  <option selected>Selecione*</option>
-                  {% for event in events %}
-                    {% if event.is_running == 1 %}
-                      <option value="{{ event.id }}" selected>{{ event.id }}</option>
+            <form method="post" action="/run-event">
+              {% csrf_token %}
+              <div class="row mb-3">
+                <div class="col-sm-12">
+                  <label class="fw-bold">Selecionar Jogo</label>
+                  <select
+                    class="form-select form-select"
+                    aria-label=".form-select-lg example"
+                    name="event_id"
+                  >
+                    <option selected>Selecione*</option>
+                    {% for event in events %} {% if event.is_running == 1 %}
+                    <option value="{{ event.id }}" selected>
+                      {{ event.id }}
+                    </option>
                     {% else %}
-                      <option value="{{ event.id }}">{{ event.id }}</option>
-                    {% endif %}
-                  {% endfor %}
-                </select>
+                    <option value="{{ event.id }}">{{ event.id }}</option>
+                    {% endif %} {% endfor %}
+                  </select>
+                </div>
               </div>
-            </div>
-            <div class="row mb-3">
-              <div class="col-sm-12">
-                <label class="fw-bold">Selecionar Portão</label>
-                <select
-                  class="form-select form-select"
-                  aria-label=".form-select-lg example"
-                >
-                  <option selected>Selecione*</option>
-                  {% for gate in gates%}
+              <div class="row mb-3">
+                <div class="col-sm-12">
+                  <label class="fw-bold">Selecionar Portão</label>
+                  <select
+                    class="form-select form-select"
+                    aria-label=".form-select-lg example"
+                    name="gate"
+                  >
+                    <option value="" selected>Selecione*</option>
+                    {% for gate in gates %}
                     <option value="{{ gate }}">{{ gate }}</option>
-                  {% endfor %}
-                </select>
+                    {% endfor %}
+                  </select>
+                </div>
               </div>
-            </div>
-            <div class="row mb-3">
-              <div class="col-sm-6">
-                <label class="fw-bold">Buscar por usuário</label>
-                <input type="text" class="form-control">
+              <div class="row mb-3">
+                <div class="col-sm-6">
+                  <label class="fw-bold">Buscar por usuário</label>
+                  <input type="text" class="form-control" name="user" />
+                </div>
+                <div class="col-sm-6">
+                  <label class="fw-bold">Buscar por ingresso</label>
+                  <input type="text" class="form-control" name="ticket" />
+                </div>
               </div>
-              <div class="col-sm-6">
-                <label class="fw-bold">Buscar por ingresso</label>
-                <input type="text" class="form-control">
+              <div class="row">
+                <div class="col-sm-12">
+                  <button class="btn btn-soccer w-100">Filtrar</button>
+                </div>
               </div>
-            </div>
-            <div class="row">
-              <div class="col-sm-12">
-                <button class="btn btn-soccer w-100">Filtrar</button>
-              </div>
-            </div>  
+            </form>
           </div>
         </div>
       </div>
     </div>
   </div>
 </div>
-{% endblock %}
-
-{% block scripts %}
-  <script>
-    $.ajax({
-      url: "refresh_tickets",
-      type: 'GET',
-      dataType: 'json',
-      success: function(data) {
-        console.log(data);
-      }
-    });
-  </script>
+{% endblock %} {% block scripts %}
+<script>
+  $.ajax({
+    url: "refresh_tickets",
+    type: "GET",
+    dataType: "json",
+    success: function (data) {
+      console.log(data);
+    },
+  });
+</script>
 {% endblock %}

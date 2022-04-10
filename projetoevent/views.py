@@ -1,6 +1,6 @@
 from importlib.resources import path
 from django.http import HttpResponse, JsonResponse
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.views.generic import View
 from django.core import serializers
 
@@ -12,7 +12,9 @@ from projetoevent.helpers.ticket_query import get_ticket_data
 
 class ExcelUpload(View):
     def get(self, request):
-        context = get_ticket_data()
+
+        context = get_ticket_data(request.GET.get('event_id', None), request.GET.get(
+            'gate', None), request.GET.get('user', None), request.GET.get('code', None))
 
         return render(request, 'projetoevent/home.html', context)
 
@@ -51,6 +53,37 @@ class ExcelUpload(View):
 
         return render(request, 'projetoevent/home.html', {'msg': 'Jogo importado com sucesso!'})
         # return redirect('/home', {'msg': 'Jogo importado com sucesso!'})
+
+
+class RunEvent(View):
+    def get(self, request):
+        running_event_id = Event.objects.filter(
+            is_running=1).values_list('id', flat=True)
+        context = get_ticket_data(running_event_id)
+
+        return render(request, 'projetoevent/home.html', context)
+
+    def post(self, request):
+        # set all current event to not running
+        Event.objects.filter(is_running=1).update(is_running=0)
+
+        # set the new event to running
+        e = Event.objects.get(id=request.POST['event_id'])
+        e.is_running = 1
+        e.save()
+
+        filter = '?event_id=' + request.POST['event_id']
+        if(request.POST['gate'] != '0'):
+            filter += '&gate=' + request.POST['gate']
+
+        if(request.POST['user'] != ''):
+            filter += '&user=' + request.POST['user']
+
+        if(request.POST['ticket'] != ''):
+            filter += '&code=' + request.POST['ticket']
+
+        return redirect('/home' + filter, {'msg': 'Jogo iniciado com sucesso!'})
+        # return redirect('/home', {'msg': 'Jogo iniciado com sucesso!'})
 
 
 class Charts(View):
