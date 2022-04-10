@@ -1,20 +1,20 @@
-from importlib.resources import path
-from django.http import HttpResponse, JsonResponse
+import json
+from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.views.generic import View
 from django.core import serializers
 
 import openpyxl
-from projetoevent.consts.action import ALREADY_CHECKED, INVALID, VALID
 from projetoevent.models import Event, Ticket, TicketLog
-from projetoevent.helpers.ticket_query import get_ticket_data
+from projetoevent.helpers.ticket_query import format_event_to_json, get_ticket_data
+from projetoevent.helpers.event_query import get_running_event_id
 
 
-class ExcelUpload(View):
+class Home(View):
     def get(self, request):
 
-        context = get_ticket_data(request.GET.get('event_id', None), request.GET.get(
-            'gate', None), request.GET.get('user', None), request.GET.get('code', None))
+        context = get_ticket_data(get_running_event_id(), request.GET.get(
+            'gate_id', None), request.GET.get('user', None), request.GET.get('ticket', None))
 
         return render(request, 'projetoevent/home.html', context)
 
@@ -56,12 +56,6 @@ class ExcelUpload(View):
 
 
 class RunEvent(View):
-    def get(self, request):
-        running_event_id = Event.objects.filter(
-            is_running=1).values_list('id', flat=True)
-        context = get_ticket_data(running_event_id)
-
-        return render(request, 'projetoevent/home.html', context)
 
     def post(self, request):
         # set all current event to not running
@@ -72,26 +66,26 @@ class RunEvent(View):
         e.is_running = 1
         e.save()
 
-        filter = '?event_id=' + request.POST['event_id']
-        if(request.POST['gate'] != '0'):
-            filter += '&gate=' + request.POST['gate']
+        # filter = '?event_id=' + request.POST['event_id']
+        filter = '?filter=1'
+        if(request.POST['gate_id'] != '0'):
+            filter += '&gate_id=' + request.POST['gate_id']
 
         if(request.POST['user'] != ''):
             filter += '&user=' + request.POST['user']
 
         if(request.POST['ticket'] != ''):
-            filter += '&code=' + request.POST['ticket']
+            filter += '&ticket=' + request.POST['ticket']
 
         return redirect('/home' + filter, {'msg': 'Jogo iniciado com sucesso!'})
-        # return redirect('/home', {'msg': 'Jogo iniciado com sucesso!'})
 
 
 class Charts(View):
     def get(self, request):
-        if 'id' in request.GET:
-            context = get_ticket_data(request.GET['id'])
+        if 'event_id' in request.GET:
+            context = get_ticket_data(request.GET['event_id'])
         else:
-            context = get_ticket_data()
+            context = get_ticket_data(get_running_event_id())
 
         return render(request, 'projetoevent/charts.html', context)
 
@@ -99,11 +93,11 @@ class Charts(View):
 class RefreshTickets():
     def get(request):
         if is_ajax(request) and request.method == "GET":
-            data = get_ticket_data()
-            json = serializers.serialize('json', data)
-            print('meta', json)
+            data = get_ticket_data(get_running_event_id())
+            # json = serializers.serialize('json', data)
+            jsona = format_event_to_json(data)
 
-            return JsonResponse({"data": json}, status=200)
+            return JsonResponse(jsona, status=200)
 
         return JsonResponse({}, status=400)
 

@@ -35,9 +35,9 @@
       <label class="fw-bold">Selecionar Jogo</label>
       <select class="form-select form-select" aria-label=".form-select-lg example" onchange="javascript:handleSelect(this)">
         {% for event in events %}
-          {% if event.id == id %}
+          {% if event.id == event_id %}
             <option value="{{ event.id }}" selected>{{ event.id }}</option>
-          {% elif event.is_running == 1 and not id %}
+          {% elif event.is_running == 1 and event_id is None %}
             <option value="{{ event.id }}" selected>{{ event.id }}</option>
           {% else %}
             <option value="{{ event.id }}">{{ event.id }}</option>
@@ -187,7 +187,7 @@
   <script>
     function handleSelect(elm)
     {
-      window.location.href = '/reports/charts?id=' + elm.value;
+      window.location.href = '/reports/charts?event_id=' + elm.value;
     }
   </script>
-{% endblock %}
+{% endblock %} 
