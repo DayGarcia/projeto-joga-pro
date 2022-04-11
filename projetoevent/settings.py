@@ -84,7 +84,7 @@ WSGI_APPLICATION = 'projetoevent.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME':  'projetojogapro',
+        'NAME': 'projetojogapro',
         'USER': 'postgres',
         'PASSWORD': 'root',
         # 'HOST': 'db',
