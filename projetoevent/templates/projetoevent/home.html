@@ -81,6 +81,9 @@
                     - {{ invalid_ticket.code }}</span
                   ><br />
                   {% endfor %}
+                  {% if invalid_tickets|length == 0 %}
+                    <span class="card-text">Nenhum ingresso inválido</span><br />
+                  {% endif %}
                 </div>
               </div>
             </div>
@@ -262,21 +265,23 @@
       });
     }
 
-    // update the progress bar every second
-    setInterval(function() {
-      let $bar = $('.progress-bar');
-      let $percent = $('.progress-percent');
-      let percent = parseInt($bar.attr('aria-valuenow'));
-      percent = percent + 10;
-      $bar.css('width', percent + '%');
-      $bar.attr('aria-valuenow', percent);
-      $percent.html(percent + '%');
-      if (percent == 100) {
-        updateEvent();
-        $bar.css('width', '0%');
-        $bar.attr('aria-valuenow', 0);
-      }
-    }, 1000); 
+    {% if events|length != 0 %}
+      setInterval(function() {
+        let $bar = $('.progress-bar');
+        let $percent = $('.progress-percent');
+        let percent = parseInt($bar.attr('aria-valuenow'));
+        percent = percent + 10;
+        $bar.css('width', percent + '%');
+        $bar.attr('aria-valuenow', percent);
+        $percent.html(percent + '%');
+        if (percent == 100) {
+          updateEvent();
+          $bar.css('width', '0%');
+          $bar.attr('aria-valuenow', 0);
+        }
+      }, 1000); 
+    {% endif %}
+    
 
   })
 
