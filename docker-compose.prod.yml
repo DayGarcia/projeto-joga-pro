@@ -5,7 +5,7 @@ services:
     build:
       context: ./projetoevent
       dockerfile: Dockerfile.prod
-    command: gunicorn projeto_event.wsgi:application --bind 0.0.0.0:8000
+    command: gunicorn projetoevent.wsgi:application --bind 0.0.0.0:8000
     ports:
       - 8000:8000
     env_file:
