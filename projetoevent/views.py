@@ -25,8 +25,10 @@ class Home(View):
         # Define variable to read the active sheet:
         worksheet = wookbook.active
 
+        Event.objects.filter(is_running=1).update(is_running=0)
+
         e = Event(
-            is_running=0
+            is_running=1
         )
         e.save()
 
