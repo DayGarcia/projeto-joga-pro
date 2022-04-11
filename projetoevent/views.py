@@ -36,17 +36,17 @@ class Home(View):
                 continue
             for col in worksheet.iter_cols(1, worksheet.max_column):
                 t = Ticket(
-                    code=worksheet.cell(row=i+1, column=2).value,
-                    rfid=worksheet.cell(row=i+1, column=3).value,
-                    status=worksheet.cell(row=i+1, column=4).value,
-                    user_id=worksheet.cell(row=i+1, column=5).value,
-                    type=worksheet.cell(row=i+1, column=6).value,
-                    gate=worksheet.cell(row=i+1, column=7).value,
-                    sector=worksheet.cell(row=i+1, column=8).value,
-                    block=worksheet.cell(row=i+1, column=9).value,
-                    row=worksheet.cell(row=i+1, column=10).value,
-                    seat=worksheet.cell(row=i+1, column=11).value,
-                    extra=worksheet.cell(row=i+1, column=12).value,
+                    code=worksheet.cell(row=i + 1, column=2).value,
+                    rfid=worksheet.cell(row=i + 1, column=3).value,
+                    status=worksheet.cell(row=i + 1, column=4).value,
+                    user_id=worksheet.cell(row=i + 1, column=5).value,
+                    type=worksheet.cell(row=i + 1, column=6).value,
+                    gate=worksheet.cell(row=i + 1, column=7).value,
+                    sector=worksheet.cell(row=i + 1, column=8).value,
+                    block=worksheet.cell(row=i + 1, column=9).value,
+                    row=worksheet.cell(row=i + 1, column=10).value,
+                    seat=worksheet.cell(row=i + 1, column=11).value,
+                    extra=worksheet.cell(row=i + 1, column=12).value,
                     event=e
                 )
                 t.save()
