@@ -37,7 +37,7 @@ def get_ticket_data(event_id=None, gate_id=None, user=None, ticket=None):
     gates = Ticket.objects.filter(event__is_running=1).distinct().order_by(
         'gate').values_list('gate', flat=True)
 
-    if(gate_id is not None):
+    if(gate_id is not None and gate_id != ''):
         gate_id = int(gate_id)
 
     if(user is None):
