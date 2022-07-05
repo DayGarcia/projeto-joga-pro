@@ -1,5 +1,6 @@
 from projetoevent.models import Event, Ticket, TicketLog
 from projetoevent.consts.action import ALREADY_CHECKED, INVALID, VALID
+from django.db.models import Q
 
 
 def get_ticket_data(event_id=None, gate_id=None, user=None, ticket=None):
@@ -17,6 +18,7 @@ def get_ticket_data(event_id=None, gate_id=None, user=None, ticket=None):
         action=ALREADY_CHECKED).filter(
         event_id=event_id).count()
     total_count = Ticket.objects.filter(event__is_running=1).filter(
+        conditional_ticket_filter(ticket)).filter(conditional_gate_filter(gate_id)).filter(
         event_id=event_id).count()
 
     # else:
@@ -71,3 +73,17 @@ def format_event_to_json(event_dict):
         'invalid_tickets': list(event_dict['invalid_tickets'].values()),
         'event_id': int(event_dict['event_id'])
     }
+
+
+def conditional_ticket_filter(ticket):
+    if ticket != None:
+        return Q(code=ticket)
+    else:
+        return Q()
+
+
+def conditional_gate_filter(gate_id):
+    if gate_id != None:
+        return Q(gate=gate_id)
+    else:
+        return Q()

@@ -14,7 +14,7 @@ class Home(View):
     def get(self, request):
 
         context = get_ticket_data(get_running_event_id(), request.GET.get(
-            'gate_id', None), request.GET.get('user', None), request.GET.get('ticket', None))
+            'gate_id', None), None, request.GET.get('ticket', None))
 
         return render(request, 'projetoevent/home.html', context)
 
@@ -25,8 +25,10 @@ class Home(View):
         # Define variable to read the active sheet:
         worksheet = wookbook.active
 
+        # stop all running events
         Event.objects.filter(is_running=1).update(is_running=0)
 
+        # set new event to running
         e = Event(
             is_running=1
         )
@@ -51,9 +53,12 @@ class Home(View):
                     extra=worksheet.cell(row=i + 1, column=12).value,
                     event=e
                 )
-                t.save()
+            t.save()
 
-        return render(request, 'projetoevent/home.html', {'msg': 'Jogo importado com sucesso!'})
+        context = get_ticket_data(get_running_event_id(), request.GET.get(
+            'gate_id', None), None, request.GET.get('ticket', None))
+
+        return render(request, 'projetoevent/home.html', {'msg': 'Jogo importado com sucesso!'} + context)
         # return redirect('/home', {'msg': 'Jogo importado com sucesso!'})
 
 
@@ -73,8 +78,8 @@ class RunEvent(View):
         if(request.POST['gate_id'] != '0'):
             filter += '&gate_id=' + request.POST['gate_id']
 
-        if(request.POST['user'] != ''):
-            filter += '&user=' + request.POST['user']
+        """ if(request.POST['user'] != ''):
+            filter += '&user=' + request.POST['user'] """
 
         if(request.POST['ticket'] != ''):
             filter += '&ticket=' + request.POST['ticket']
