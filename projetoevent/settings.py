@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'projetoevent',
+    'django_q'
 ]
 
 MIDDLEWARE = [
@@ -134,3 +135,13 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Configure your Q cluster
+# More details https://django-q.readthedocs.io/en/latest/configure.html
+Q_CLUSTER = {
+    "name": "projetoevent",
+    "orm": "default",  # Use Django's ORM + database for broker
+    "retry": 310,
+    "timeout": 300,
+    "max_attempts": 3
+}

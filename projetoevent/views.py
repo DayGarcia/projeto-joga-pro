@@ -4,10 +4,12 @@ from django.shortcuts import redirect, render
 from django.views.generic import View
 from django.core import serializers
 
-import openpyxl
+from projetoevent.helpers.tasks import save_event_task
 from projetoevent.models import Event, Ticket, TicketLog
 from projetoevent.helpers.ticket_query import format_event_to_json, get_ticket_data
 from projetoevent.helpers.event_query import get_running_event_id
+
+from django_q.tasks import async_task
 
 
 class Home(View):
@@ -19,47 +21,24 @@ class Home(View):
         return render(request, 'projetoevent/home.html', context)
 
     def post(self, request):
-        # Define variable to load the wookbook
-        wookbook = openpyxl.load_workbook(request.FILES['file'])
-
-        # Define variable to read the active sheet:
-        worksheet = wookbook.active
 
         # stop all running events
         Event.objects.filter(is_running=1).update(is_running=0)
 
         # set new event to running
-        e = Event(
-            is_running=1
+        event = Event(
+            is_running=1,
+            is_uploading=1,
         )
-        e.save()
+        event.save()
 
-        # Iterate the loop to read the cell values
-        for i in range(0, worksheet.max_row):
-            if i == 0:
-                continue
-            for col in worksheet.iter_cols(1, worksheet.max_column):
-                t = Ticket(
-                    code=worksheet.cell(row=i + 1, column=2).value,
-                    rfid=worksheet.cell(row=i + 1, column=3).value,
-                    status=worksheet.cell(row=i + 1, column=4).value,
-                    user_id=worksheet.cell(row=i + 1, column=5).value,
-                    type=worksheet.cell(row=i + 1, column=6).value,
-                    gate=worksheet.cell(row=i + 1, column=7).value,
-                    sector=worksheet.cell(row=i + 1, column=8).value,
-                    block=worksheet.cell(row=i + 1, column=9).value,
-                    row=worksheet.cell(row=i + 1, column=10).value,
-                    seat=worksheet.cell(row=i + 1, column=11).value,
-                    extra=worksheet.cell(row=i + 1, column=12).value,
-                    event=e
-                )
-            t.save()
+        async_task('projetoevent.helpers.tasks.save_event_task', request.FILES['file'], event)
 
         context = get_ticket_data(get_running_event_id(), request.GET.get(
             'gate_id', None), None, request.GET.get('ticket', None))
 
-        return render(request, 'projetoevent/home.html', {'msg': 'Jogo importado com sucesso!'} + context)
-        # return redirect('/home', {'msg': 'Jogo importado com sucesso!'})
+        # return render(request, 'projetoevent/home.html', context)
+        return redirect('/home')
 
 
 class RunEvent(View):

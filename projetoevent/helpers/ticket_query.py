@@ -39,6 +39,9 @@ def get_ticket_data(event_id=None, gate_id=None, user=None, ticket=None):
     gates = Ticket.objects.filter(event__is_running=1).distinct().order_by(
         'gate').values_list('gate', flat=True)
 
+    # is uploading event
+    is_uploading = Event.objects.filter(is_uploading=1).count()
+
     if(gate_id is not None and gate_id != ''):
         gate_id = int(gate_id)
 
@@ -47,6 +50,10 @@ def get_ticket_data(event_id=None, gate_id=None, user=None, ticket=None):
 
     if(ticket is None):
         ticket = ''
+
+    if(is_uploading is not None and is_uploading != '' and is_uploading > 0):
+        is_uploading = True
+
     return {
         'events': events,
         'valid_tickets': valid_tickets,
@@ -59,7 +66,8 @@ def get_ticket_data(event_id=None, gate_id=None, user=None, ticket=None):
         'event_id': int(event_id),
         'gate_id': gate_id,
         'user': user,
-        'ticket': ticket
+        'ticket': ticket,
+        'is_uploading': is_uploading
     }
 
 
