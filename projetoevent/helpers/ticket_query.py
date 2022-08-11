@@ -84,14 +84,14 @@ def format_event_to_json(event_dict):
 
 
 def conditional_ticket_filter(ticket):
-    if ticket != None:
+    if ticket != None and ticket != '':
         return Q(code=ticket)
     else:
         return Q()
 
 
 def conditional_gate_filter(gate_id):
-    if gate_id != None:
+    if gate_id != None and gate_id != '':
         return Q(gate=gate_id)
     else:
         return Q()

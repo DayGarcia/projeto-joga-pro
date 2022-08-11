@@ -1,15 +1,15 @@
 from projetoevent.models import Event, Ticket
 import openpyxl
 
-def save_event_task(workshives, event):
+def save_event_task(request_file, event):
 
     try:
         # Define variable to load the wookbook
-        wookbook = openpyxl.load_workbook(workshives)
+        wookbook = openpyxl.load_workbook(request_file)
 
         # Define variable to read the active sheet:
         worksheet = wookbook.active
-        
+
         # Iterate the loop to read the cell values
         for i in range(0, worksheet.max_row):
             if i == 0:
