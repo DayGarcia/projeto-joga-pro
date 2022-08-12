@@ -28,11 +28,14 @@ class Home(View):
         # set new event to running
         event = Event(
             is_running=1,
-            is_uploading=1,
+            # is_uploading=1,
         )
         event.save()
 
-        async_task('projetoevent.helpers.tasks.save_event_task', request.FILES['file'], event)
+        try:
+            async_task('projetoevent.helpers.tasks.save_event_task', request.FILES['file'], event)
+        except Exception as e:
+            Event.objects.filter(is_uploading=1).update(is_uploading=0)
 
         context = get_ticket_data(get_running_event_id(), request.GET.get(
             'gate_id', None), None, request.GET.get('ticket', None))

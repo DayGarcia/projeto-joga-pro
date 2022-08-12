@@ -141,7 +141,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 Q_CLUSTER = {
     "name": "projetoevent",
     "orm": "default",  # Use Django's ORM + database for broker
-    "retry": 310,
-    "timeout": 300,
+    "retry": 10010,
+    "timeout": 10000,
     "max_attempts": 3
 }
