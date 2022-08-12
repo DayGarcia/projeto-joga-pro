@@ -6,7 +6,7 @@
 FROM python:3.9.6-alpine as builder
 
 # set work directory
-WORKDIR /home/pi/Desktop/Catraca/projeto-joga-pro
+WORKDIR /app
 
 # set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
@@ -24,7 +24,7 @@ RUN flake8 --ignore=E501,F401 .
 
 # install dependencies
 COPY ./requirements.txt .
-RUN pip wheel --no-cache-dir --no-deps --wheel-dir /home/pi/Desktop/Catraca/projeto-joga-pro/wheels -r requirements.txt
+RUN pip wheel --no-cache-dir --no-deps --wheel-dir /app/wheels -r requirements.txt
 
 
 #########
@@ -35,21 +35,21 @@ RUN pip wheel --no-cache-dir --no-deps --wheel-dir /home/pi/Desktop/Catraca/proj
 FROM python:3.9.6-alpine
 
 # create directory for the app user
-RUN mkdir -p /home/pi/Desktop/Catraca/projeto-joga-pro
+RUN mkdir -p /app
 
 # create the app user
 RUN addgroup -S app && adduser -S app -G app
 
 # create the appropriate directories
-ENV HOME=/home/pi/Desktop/Catraca/projeto-joga-pro
-ENV APP_HOME=/home/pi/Desktop/Catraca/projeto-joga-pro/web
+ENV HOME=/app
+ENV APP_HOME=/app/web
 RUN mkdir $APP_HOME
 WORKDIR $APP_HOME
 
 # install dependencies
 RUN apk update && apk add libpq
-COPY --from=builder /home/pi/Desktop/Catraca/projeto-joga-pro/wheels /wheels
-COPY --from=builder /home/pi/Desktop/Catraca/projeto-joga-pro/requirements.txt .
+COPY --from=builder /app/wheels /wheels
+COPY --from=builder /app/requirements.txt .
 RUN pip install --no-cache /wheels/*
 
 # copy entrypoint.prod.sh
@@ -67,4 +67,4 @@ RUN chown -R app:app $APP_HOME
 USER app
 
 # run entrypoint.prod.sh
-ENTRYPOINT ["/home/pi/Desktop/Catraca/projeto-joga-pro/web/entrypoint.prod.sh"]
+ENTRYPOINT ["/app/web/entrypoint.prod.sh"]
