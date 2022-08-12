@@ -1,6 +1,9 @@
 # pull official base image
 FROM python:3.9.6-alpine
 
+COPY ./trusted-certs.pem /usr/local/share/ca-certificates/
+RUN cat /usr/local/share/ca-certificates/trusted-certs.pem >> /etc/ssl/certs/ca-certificates.crt
+
 # set work directory
 WORKDIR /app
 
