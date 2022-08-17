@@ -28,12 +28,13 @@ class Home(View):
         # set new event to running
         event = Event(
             is_running=1,
-            # is_uploading=1,
+            is_uploading=1
         )
         event.save()
 
         try:
-            async_task('projetoevent.helpers.tasks.save_event_task', request.FILES['file'], event)
+            async_task('projetoevent.helpers.tasks.save_event_task',
+                       request.FILES['file'], event)
         except Exception as e:
             Event.objects.filter(is_uploading=1).update(is_uploading=0)
 
@@ -57,13 +58,13 @@ class RunEvent(View):
 
         # filter = '?event_id=' + request.POST['event_id']
         filter = '?filter=1'
-        if(request.POST['gate_id'] != '0'):
+        if (request.POST['gate_id'] != '0'):
             filter += '&gate_id=' + request.POST['gate_id']
 
         """ if(request.POST['user'] != ''):
             filter += '&user=' + request.POST['user'] """
 
-        if(request.POST['ticket'] != ''):
+        if (request.POST['ticket'] != ''):
             filter += '&ticket=' + request.POST['ticket']
 
         return redirect('/home' + filter, {'msg': 'Jogo iniciado com sucesso!'})
